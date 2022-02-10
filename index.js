@@ -100,8 +100,7 @@ const get3 = async () => {
       'query AggregatedContents($first: Int, $after: PaginationCursor, $last: Int, $before: PaginationCursor, $where: AggregatedContentWhereInput) {\n  aggregatedContents(\n    first: $first\n    after: $after\n    last: $last\n    before: $before\n    where: $where\n  ) {\n    totalCount\n    pageInfo {\n      hasPreviousPage\n      hasNextPage\n      startCursor\n      endCursor\n      __typename\n    }\n    edges {\n      cursor\n      node {\n        id\n        subType\n        type\n        title\n        publishDate\n        link\n        assets {\n          id\n          name\n          slug\n          symbol\n          __typename\n        }\n        source {\n          id\n          platform\n          link\n          creator {\n            id\n            name\n            link\n            slug\n            ... on AssetCreator {\n              id\n              name\n              slug\n              asset {\n                id\n                name\n                slug\n                logo\n                __typename\n              }\n              __typename\n            }\n            __typename\n          }\n          __typename\n        }\n        __typename\n      }\n      __typename\n    }\n    __typename\n  }\n}\n',
   };
   const r = await axios.post(u, b);
-
-  const r2 = _.get(r, 'data.aggregatedContents.edges');
+  const r2 = _.get(r, 'data.data.aggregatedContents.edges');
 
   const r3 = _.map(r2, 'node');
 
@@ -142,19 +141,24 @@ app.listen(port || 5000, () => {
 
 app.get('/coin', async (req, res) => {
   // const research = await axios.get('https://java-crypto.herokuapp.com/post/getAll');
+  console.log('Fetch research success');
   const news = await get3();
-  // const intel = await get();
-  const GITHUB_TOKEN = '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 ';
+  console.log('Fetch news success');
+  const intel = await get();
+  console.log('Fetch intel success');
+  const GITHUB_TOKEN = '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 ';
   const ssid = uuidv4();
   const octokit = new Octokit({
     auth: GITHUB_TOKEN,
   });
+  console.log('Start Octokit success');
   const rsha = await octokit.repos.getContent({
     owner: 'lamnt95',
     repo: 'coindb2',
     path: 'README.md',
   });
   const sha = rsha?.data?.sha;
+  console.log('Fetch sha success');
   const cmitstr = new Date().toString();
   const cmit = await octokit.repos.createOrUpdateFileContents({
     owner: 'lamnt95',
@@ -164,15 +168,18 @@ app.get('/coin', async (req, res) => {
     content: Buffer.from(ssid).toString('base64'),
     sha,
   });
+  console.log('Commit readme.md success');
 
   const newStr = JSON.stringify(news);
   const cmitNews = await octokit.repos.createOrUpdateFileContents({
     owner: 'lamnt95',
     repo: 'coindb2',
-    path: 'news-' + ssid + '.json',
+    path: '/' + cmitstr + '/news-' + ssid + '.json',
     message: cmitstr,
     content: Buffer.from(newStr).toString('base64'),
     sha,
   });
+  console.log('Commit new success');
+
   res.send('OK');
 });
