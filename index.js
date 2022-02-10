@@ -144,7 +144,7 @@ app.get('/coin', async (req, res) => {
   // const research = await axios.get('https://java-crypto.herokuapp.com/post/getAll');
   // const news = await get3();
   // const intel = await get();
-  const GITHUB_TOKEN = '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';
+  const GITHUB_TOKEN = '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';
   const ssid = uuidv4();
   const octokit = new Octokit({
     auth: GITHUB_TOKEN,
