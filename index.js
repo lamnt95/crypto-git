@@ -1,4 +1,5 @@
 const express = require('express');
+const axios = require('axios');
 const app = express();
 const port = process.env.PORT || 5000;
 const path = require('path');
@@ -16,5 +17,7 @@ app.listen(port || 5000, () => {
 });
 
 app.get('/coin', async (req, res) => {
-  res.send('OK');
+  const a = await axios.get('https://java-crypto.herokuapp.com/post/getAll');
+  console.log('a success');
+  res.send(a);
 });
