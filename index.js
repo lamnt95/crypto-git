@@ -11,20 +11,16 @@ const { v4: uuidv4 } = require('uuid');
 const _ = require('lodash');
 
 const get = async () => {
-  console.log('get');
   const u =
     'https://3b439zgym3-dsn.algolia.net/1/indexes/*/queries?x-algolia-agent=Algolia%20for%20JavaScript%20(3.35.1)%3B%20Browser%20(lite)&x-algolia-application-id=3B439ZGYM3&x-algolia-api-key=14a0c8d17665d52e61167cc1b2ae9ff1';
   let hs = await get2();
-  console.log('cf', _.size(cf));
   for (let i = 0; i < _.size(cf); i++) {
-    console.log(i);
     const b = cf[i];
     const r = await axios.post(u, b);
     const h = _.get(r, 'results.0.hits');
-    console.log('h', i);
-    console.log(_.size(h));
     hs = hs.concat(h);
   }
+  hs = _.filter(hs, (i) => i != null && i != undefined);
   hs = _.map(hs, (i, index) => {
     const resources = _.map(i.resources, 'link') || [];
     let i2 = { ...i };
@@ -140,14 +136,32 @@ app.listen(port || 5000, () => {
 });
 
 app.get('/coin', async (req, res) => {
-  // const research = await axios.get('https://java-crypto.herokuapp.com/post/getAll');
-  console.log('Fetch research success');
-  // const news = await get3();
-  const news = [];
+  try {
+    research = await axios.get(
+      'https://java-crypto.herokuapp.com/post/fetchMessari?limit=10000'
+    );
+    console.log('Craw research success');
+  } catch (e) {
+    console.log('Craw research Error');
+    console.log(e);
+  }
+
+  let research = [];
+  try {
+    research = await axios.get('https://java-crypto.herokuapp.com/post/getAll');
+    console.log('Fetch research success');
+  } catch (e) {
+    console.log('Fetch research Error');
+    console.log(e);
+  }
+
+  const news = await get3();
+  // const news = [];
   console.log('Fetch news success');
+  // const intel = [];
   const intel = await get();
   console.log('Fetch intel success');
-  const GITHUB_TOKEN = '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';
+  const GITHUB_TOKEN = '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';
   const ssid = uuidv4();
   const octokit = new Octokit({
     auth: GITHUB_TOKEN,
@@ -160,12 +174,11 @@ app.get('/coin', async (req, res) => {
   });
   const sha = rsha?.data?.sha;
   console.log('Fetch sha success');
-  const cmitstr = new Date().toString();
   const cmit = await octokit.repos.createOrUpdateFileContents({
     owner: 'lamnt95',
     repo: 'coindb2',
     path: 'README.md',
-    message: cmitstr,
+    message: ssid,
     content: Buffer.from(ssid).toString('base64'),
     sha,
   });
@@ -175,8 +188,8 @@ app.get('/coin', async (req, res) => {
   const cmitNews = await octokit.repos.createOrUpdateFileContents({
     owner: 'lamnt95',
     repo: 'coindb2',
-    path: cmitstr + '/news-' + ssid + '.json',
-    message: cmitstr,
+    path: ssid + '/news-' + ssid + '.json',
+    message: ssid,
     content: Buffer.from(newStr).toString('base64'),
     sha,
   });
@@ -186,12 +199,23 @@ app.get('/coin', async (req, res) => {
   const cmitIntels = await octokit.repos.createOrUpdateFileContents({
     owner: 'lamnt95',
     repo: 'coindb2',
-    path: cmitstr + '/intel-' + ssid + '.json',
-    message: cmitstr,
+    path: ssid + '/intel-' + ssid + '.json',
+    message: ssid,
     content: Buffer.from(intelStr).toString('base64'),
     sha,
   });
   console.log('Commit intel success');
+
+  const researchStr = JSON.stringify(research);
+  const cmitResearch = await octokit.repos.createOrUpdateFileContents({
+    owner: 'lamnt95',
+    repo: 'coindb2',
+    path: ssid + '/research-' + ssid + '.json',
+    message: ssid,
+    content: Buffer.from(researchStr).toString('base64'),
+    sha,
+  });
+  console.log('Commit research success');
 
   res.send('OK');
 });
