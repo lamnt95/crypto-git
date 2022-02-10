@@ -20,6 +20,7 @@ const get = async () => {
     const b = cf[i];
     const r = await axios.post(u, b);
     const h = _.get(r, 'results.0.hits');
+    console.log(r);
     hs = hs.concat(h);
   }
   console.log(hs);
@@ -146,7 +147,7 @@ app.get('/coin', async (req, res) => {
   console.log('Fetch news success');
   const intel = await get();
   console.log('Fetch intel success');
-  const GITHUB_TOKEN = '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 ';
+  const GITHUB_TOKEN = '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';
   const ssid = uuidv4();
   const octokit = new Octokit({
     auth: GITHUB_TOKEN,
@@ -174,12 +175,23 @@ app.get('/coin', async (req, res) => {
   const cmitNews = await octokit.repos.createOrUpdateFileContents({
     owner: 'lamnt95',
     repo: 'coindb2',
-    path: '/' + cmitstr + '/news-' + ssid + '.json',
+    path: cmitstr + '/news-' + ssid + '.json',
     message: cmitstr,
     content: Buffer.from(newStr).toString('base64'),
     sha,
   });
   console.log('Commit new success');
+
+  const intelStr = JSON.stringify(intel);
+  const cmitIntels = await octokit.repos.createOrUpdateFileContents({
+    owner: 'lamnt95',
+    repo: 'coindb2',
+    path: cmitstr + '/intel-' + ssid + '.json',
+    message: cmitstr,
+    content: Buffer.from(intelStr).toString('base64'),
+    sha,
+  });
+  console.log('Commit intel success');
 
   res.send('OK');
 });
