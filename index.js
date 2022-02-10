@@ -137,7 +137,7 @@ app.listen(port || 5000, () => {
 
 app.get('/coin', async (req, res) => {
   try {
-    research = await axios.get(
+    await axios.get(
       'https://java-crypto.herokuapp.com/post/fetchMessari?limit=10000'
     );
     console.log('Craw research success');
@@ -161,7 +161,7 @@ app.get('/coin', async (req, res) => {
   // const intel = [];
   const intel = await get();
   console.log('Fetch intel success');
-  const GITHUB_TOKEN = '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';
+  const GITHUB_TOKEN = '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';
   const ssid = uuidv4();
   const octokit = new Octokit({
     auth: GITHUB_TOKEN,
