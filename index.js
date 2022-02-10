@@ -162,24 +162,24 @@ app.get('/coin', async (req, res) => {
     // const news = [];
     console.log('Fetch news success');
     // const intel = [];
-    const intel1 = await get();
-    const intel = _.map(intel1, (i) => ({
-      importance: i.importance,
-      subCategory: i.subCategory,
-      status: i.status,
-      eventDate: i.eventDate,
-      updateDate: i.updateDate,
-      eventName: i.eventName,
-      details: i.details,
-      date: i.date,
-      assets: i.assets,
-      category: i.category,
-      objectID: i.objectID,
-      resources: i.resources,
-      update: i.update,
-      description: i.description,
-      descriptionDetail: i.descriptionDetail,
-    }));
+    const intel = await get();
+    // const intel = _.map(intel1, (i) => ({
+    //   importance: i.importance,
+    //   subCategory: i.subCategory,
+    //   status: i.status,
+    //   eventDate: i.eventDate,
+    //   updateDate: i.updateDate,
+    //   eventName: i.eventName,
+    //   details: i.details,
+    //   date: i.date,
+    //   assets: i.assets,
+    //   category: i.category,
+    //   objectID: i.objectID,
+    //   resources: i.resources,
+    //   update: i.update,
+    //   description: i.description,
+    //   descriptionDetail: i.descriptionDetail,
+    // }));
     console.log('Fetch intel success');
     const GITHUB_TOKEN = req.query.tk;
     const ssid = uuidv4();
