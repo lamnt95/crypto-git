@@ -204,6 +204,7 @@ app.get('/coin', async (req, res) => {
     content: Buffer.from(intelStr).toString('base64'),
     sha,
   });
+
   console.log('Commit intel success');
 
   const researchStr = JSON.stringify(research);
