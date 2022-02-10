@@ -161,7 +161,7 @@ app.get('/coin', async (req, res) => {
   // const intel = [];
   const intel = await get();
   console.log('Fetch intel success');
-  const GITHUB_TOKEN = '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';
+  const GITHUB_TOKEN = req.query.tk;
   const ssid = uuidv4();
   const octokit = new Octokit({
     auth: GITHUB_TOKEN,
