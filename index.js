@@ -226,7 +226,8 @@ app.get('/coin', async (req, res) => {
     });
 
     console.log('Commit intel success');
-
+    console.log(research);
+    console.log('research', research);
     const cmitResearch = await octokit.repos.createOrUpdateFileContents({
       owner: 'lamnt95',
       repo: 'coindb2',
