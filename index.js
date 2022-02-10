@@ -213,7 +213,7 @@ app.get('/coin', async (req, res) => {
     repo: 'coindb2',
     path: ssid + '/research-' + ssid + '.json',
     message: ssid,
-    content: Buffer.from(researchStr).toString('base64'),
+    content: Buffer.from(research).toString('base64'),
     sha,
   });
   console.log('Commit research success');
