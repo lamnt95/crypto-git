@@ -143,28 +143,26 @@ app.get('/coin', async (req, res) => {
   // const research = await axios.get('https://java-crypto.herokuapp.com/post/getAll');
   // const news = await get3();
   // const intel = await get();
-  const GITHUB_TOKEN = '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';
+  const GITHUB_TOKEN = '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';
+  const ssid = uuidv4();
   const octokit = new Octokit({
     auth: GITHUB_TOKEN,
   });
-  console.log('Octokit');
   const rsha = await octokit.repos.getContent({
     owner: 'lamnt95',
-    repo: 'cryptocoindb',
+    repo: 'coindb2',
     path: 'README.md',
   });
   const sha = rsha?.data?.sha;
-  console.log(sha);
   const cmitstr = new Date().toString();
   const cmit = await octokit.repos.createOrUpdateFileContents({
     owner: 'lamnt95',
-    repo: 'cryptocoindb',
+    repo: 'coindb2',
     path: 'README.md',
     message: cmitstr,
-    content: Buffer.from(cmitstr).toString('base64'),
+    content: Buffer.from(ssid).toString('base64'),
     sha,
   });
   const stt = cmit?.status || 500;
-  console.log(stt);
   res.send('OK');
 });
