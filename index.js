@@ -6,6 +6,7 @@ const path = require('path');
 var cors = require('cors');
 var bodyParser = require('body-parser');
 var { Octokit } = require('@octokit/rest');
+const { v4: uuidv4 } = require('uuid');
 
 const _ = require('lodash');
 const cf = require('./calendar');
