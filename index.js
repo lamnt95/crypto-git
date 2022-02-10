@@ -137,88 +137,95 @@ app.listen(port || 5000, () => {
 
 app.get('/coin', async (req, res) => {
   try {
-    await axios.get(
-      'https://java-crypto.herokuapp.com/post/fetchMessari?limit=10000'
-    );
-    console.log('Craw research success');
-  } catch (e) {
-    console.log('Craw research Error');
-    console.log(e);
+    try {
+      await axios.get(
+        'https://java-crypto.herokuapp.com/post/fetchMessari?limit=10000'
+      );
+      console.log('Craw research success');
+    } catch (e) {
+      console.log('Craw research Error');
+      console.log(e);
+    }
+
+    let research = [];
+    try {
+      research = await axios.get(
+        'https://java-crypto.herokuapp.com/post/getAll'
+      );
+      console.log('Fetch research success');
+    } catch (e) {
+      console.log('Fetch research Error');
+      console.log(e);
+    }
+
+    const news = await get3();
+    // const news = [];
+    console.log('Fetch news success');
+    // const intel = [];
+    const intel = await get();
+    console.log('Fetch intel success');
+    const GITHUB_TOKEN = req.query.tk;
+    const ssid = uuidv4();
+    const octokit = new Octokit({
+      auth: GITHUB_TOKEN,
+    });
+    console.log('Start Octokit success');
+    const rsha = await octokit.repos.getContent({
+      owner: 'lamnt95',
+      repo: 'coindb2',
+      path: 'README.md',
+    });
+    const sha = rsha?.data?.sha;
+    console.log('Fetch sha success');
+    const cmit = await octokit.repos.createOrUpdateFileContents({
+      owner: 'lamnt95',
+      repo: 'coindb2',
+      path: 'README.md',
+      message: ssid,
+      content: Buffer.from(ssid).toString('base64'),
+      sha,
+    });
+    console.log('Commit readme.md success');
+
+    const newStr = JSON.stringify(news);
+    const cmitNews = await octokit.repos.createOrUpdateFileContents({
+      owner: 'lamnt95',
+      repo: 'coindb2',
+      path: ssid + '/news-' + ssid + '.json',
+      message: ssid,
+      content: Buffer.from(newStr).toString('base64'),
+      sha,
+    });
+    console.log('Commit new success');
+
+    const intelStr = JSON.stringify(intel);
+    const cmitIntels = await octokit.repos.createOrUpdateFileContents({
+      owner: 'lamnt95',
+      repo: 'coindb2',
+      path: ssid + '/intel-' + ssid + '.json',
+      message: ssid,
+      content: Buffer.from(intelStr).toString('base64'),
+      sha,
+    });
+
+    console.log('Commit intel success');
+
+    const researchStr = JSON.stringify(research);
+    const cmitResearch = await octokit.repos.createOrUpdateFileContents({
+      owner: 'lamnt95',
+      repo: 'coindb2',
+      path: ssid + '/research-' + ssid + '.json',
+      message: ssid,
+      content: Buffer.from(researchStr).toString('base64'),
+      sha,
+    });
+    console.log('Commit research success');
+
+    res.send('OK');
+  } catch (eglobal) {
+    console.log(eglobal);
+    res.send('error');
   }
-
-  let research = [];
-  try {
-    research = await axios.get('https://java-crypto.herokuapp.com/post/getAll');
-    console.log('Fetch research success');
-  } catch (e) {
-    console.log('Fetch research Error');
-    console.log(e);
-  }
-
-  const news = await get3();
-  // const news = [];
-  console.log('Fetch news success');
-  // const intel = [];
-  const intel = await get();
-  console.log('Fetch intel success');
-  const GITHUB_TOKEN = req.query.tk;
-  const ssid = uuidv4();
-  const octokit = new Octokit({
-    auth: GITHUB_TOKEN,
-  });
-  console.log('Start Octokit success');
-  const rsha = await octokit.repos.getContent({
-    owner: 'lamnt95',
-    repo: 'coindb2',
-    path: 'README.md',
-  });
-  const sha = rsha?.data?.sha;
-  console.log('Fetch sha success');
-  const cmit = await octokit.repos.createOrUpdateFileContents({
-    owner: 'lamnt95',
-    repo: 'coindb2',
-    path: 'README.md',
-    message: ssid,
-    content: Buffer.from(ssid).toString('base64'),
-    sha,
-  });
-  console.log('Commit readme.md success');
-
-  const newStr = JSON.stringify(news);
-  const cmitNews = await octokit.repos.createOrUpdateFileContents({
-    owner: 'lamnt95',
-    repo: 'coindb2',
-    path: ssid + '/news-' + ssid + '.json',
-    message: ssid,
-    content: Buffer.from(newStr).toString('base64'),
-    sha,
-  });
-  console.log('Commit new success');
-
-  const intelStr = JSON.stringify(intel);
-  const cmitIntels = await octokit.repos.createOrUpdateFileContents({
-    owner: 'lamnt95',
-    repo: 'coindb2',
-    path: ssid + '/intel-' + ssid + '.json',
-    message: ssid,
-    content: Buffer.from(intelStr).toString('base64'),
-    sha,
-  });
-
-  console.log('Commit intel success');
-
-  const researchStr = JSON.stringify(research);
-  const cmitResearch = await octokit.repos.createOrUpdateFileContents({
-    owner: 'lamnt95',
-    repo: 'coindb2',
-    path: ssid + '/research-' + ssid + '.json',
-    message: ssid,
-    content: Buffer.from(researchStr).toString('base64'),
-    sha,
-  });
-  console.log('Commit research success');
-
-  res.send('OK');
 });
 
 const cf = [
