@@ -147,10 +147,10 @@ app.get('/coin', async (req, res) => {
       console.log(e);
     }
 
-    let research = [];
+    let research = '';
     try {
       research = await axios.get(
-        'https://java-crypto.herokuapp.com/post/getAll'
+        'https://java-crypto.herokuapp.com/post/getAllStr'
       );
       console.log('Fetch research success');
     } catch (e) {
@@ -227,13 +227,12 @@ app.get('/coin', async (req, res) => {
 
     console.log('Commit intel success');
 
-    const researchStr = JSON.stringify(research);
     const cmitResearch = await octokit.repos.createOrUpdateFileContents({
       owner: 'lamnt95',
       repo: 'coindb2',
       path: ssid + '/research-' + ssid + '.json',
       message: ssid,
-      content: Buffer.from(researchStr).toString('base64'),
+      content: Buffer.from(research).toString('base64'),
       sha,
     });
     console.log('Commit research success');
