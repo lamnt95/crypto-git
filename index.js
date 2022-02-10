@@ -12,3 +12,7 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening at http://localhost:${port}`);
 });
+
+app.get('/coin', async (req, res) => {
+  res.send('OK');
+});
