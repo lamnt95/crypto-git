@@ -207,7 +207,7 @@ app.get('/coin', async (req, res) => {
   console.log('Commit intel success');
 
   console.log(research);
-  const researchStr = JSON.stringify(research);
+  // const researchStr = JSON.stringify(research);
   const cmitResearch = await octokit.repos.createOrUpdateFileContents({
     owner: 'lamnt95',
     repo: 'coindb2',
