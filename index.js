@@ -18,7 +18,6 @@ const get = async () => {
     const b = cf[i];
     const r = await axios.post(u, b);
     const h = _.get(r, 'data.results.0.hits');
-    console.log('h', _.size(h));
     hs = hs.concat(h);
   }
   hs = _.filter(hs, (i) => i != null && i != undefined);
@@ -138,115 +137,69 @@ app.listen(port || 5000, () => {
 
 app.get('/coin', async (req, res) => {
   try {
-    // try {
-    //   await axios.get(
-    //     'https://java-crypto.herokuapp.com/post/fetchMessari?limit=10000'
-    //   );
-    //   console.log('Craw research success');
-    // } catch (e) {
-    //   console.log('Craw research Error');
-    //   console.log(e);
-    // }
-
-    // let research = '';
-    // try {
-    //   research = await axios.get(
-    //     'https://java-crypto.herokuapp.com/post/getAllStr'
-    //   );
-    //   console.log('Fetch research success');
-    // } catch (e) {
-    //   console.log('Fetch research Error');
-    //   console.log(e);
-    // }
+    try {
+      await axios.get(
+        'https://java-crypto.herokuapp.com/post/fetchMessari?limit=10000'
+      );
+      console.log('Craw research success');
+    } catch (e) {
+      console.log('Craw research Error');
+      console.log(e);
+    }
+    let research = '';
+    try {
+      research = await axios.get(
+        'https://java-crypto.herokuapp.com/post/getAllStr'
+      );
+      console.log('Fetch research success');
+    } catch (e) {
+      console.log('Fetch research Error');
+      console.log(e);
+    }
     console.log('Fetch news start');
     const news = await get3();
-    // const news = [];
     console.log('Fetch news success');
-    // const intel = [];
     console.log('Fetch intel start');
     const intel = await get();
-    // const intel = _.map(intel1, (i) => ({
-    //   importance: i.importance,
-    //   subCategory: i.subCategory,
-    //   status: i.status,
-    //   eventDate: i.eventDate,
-    //   updateDate: i.updateDate,
-    //   eventName: i.eventName,
-    //   details: i.details,
-    //   date: i.date,
-    //   assets: i.assets,
-    //   category: i.category,
-    //   objectID: i.objectID,
-    //   resources: i.resources,
-    //   update: i.update,
-    //   description: i.description,
-    //   descriptionDetail: i.descriptionDetail,
-    // }));
     console.log('Fetch intel success');
-    // const GITHUB_TOKEN = req.query.tk;
-    // const ssid = uuidv4();
-    // const octokit = new Octokit({
-    //   auth: GITHUB_TOKEN,
-    // });
-    // console.log('Start Octokit success');
-    // const rsha = await octokit.repos.getContent({
-    //   owner: 'lamnt95',
-    //   repo: 'coindb2',
-    //   path: 'README.md',
-    // });
-    // const sha = rsha?.data?.sha;
-    // console.log('Fetch sha success');
-    // const cmit = await octokit.repos.createOrUpdateFileContents({
-    //   owner: 'lamnt95',
-    //   repo: 'coindb2',
-    //   path: 'README.md',
-    //   message: ssid,
-    //   content: Buffer.from(ssid).toString('base64'),
-    //   sha,
-    // });
-    // console.log('Commit readme.md success');
-
     const newStr = JSON.stringify(news);
-    // const cmitNews = await octokit.repos.createOrUpdateFileContents({
-    //   owner: 'lamnt95',
-    //   repo: 'coindb2',
-    //   path: ssid + '/news-' + ssid + '.json',
-    //   message: ssid,
-    //   content: Buffer.from(newStr).toString('base64'),
-    //   sha,
-    // });
-    console.log('Commit new success');
-
     const intelStr = JSON.stringify(intel);
-    // const cmitIntels = await octokit.repos.createOrUpdateFileContents({
-    //   owner: 'lamnt95',
-    //   repo: 'coindb2',
-    //   path: ssid + '/intel-' + ssid + '.json',
-    //   message: ssid,
-    //   content: Buffer.from(intelStr).toString('base64'),
-    //   sha,
-    // });
 
-    console.log('Commit intel success');
-    // console.log(research);
-    // console.log('research', research);
-    // const cmitResearch = await octokit.repos.createOrUpdateFileContents({
-    //   owner: 'lamnt95',
-    //   repo: 'coindb2',
-    //   path: ssid + '/research-' + ssid + '.json',
-    //   message: ssid,
-    //   content: Buffer.from(research).toString('base64'),
-    //   sha,
-    // });
-    console.log('Commit research success');
-    console.log('size array', _.size(news), _.size(intel));
-    console.log('size str', _.size(newStr), _.size(intelStr));
+    const token_json =
+      '$2b$10$i5XfrD/hLN4yFyn9ZW9RIO1xowGx1mkB1mJCRV64dfjmw/B21GlK.';
+    const new_json_id = '620b545b4bf50f4b2dfc5e43';
+    const intel_json_id = '620b541d1b38ee4b33bbeaed';
+    const research_json_id = '620b5411ca70c44b6e989787';
+    console.log('Push Json new start');
+    putJson(new_json_id, newStr, token_json);
+    console.log('Push Json new success');
+    console.log('Push Json intel start');
+    putJson(intel_json_id, intelStr, token_json);
+    console.log('Push Json intel success');
+    console.log('Push Json research start');
+    console.log('Push Json research success');
     res.send('OK');
   } catch (eglobal) {
     console.log(eglobal);
     res.send('error');
   }
 });
+
+const putJson = async (bindId, data, token) => {
+  const body = {
+    bin: data,
+    versioning: false,
+    binId: bindId,
+  };
+  const config = {
+    headers: { 'X-Master-Key': token },
+  };
+  const res = await axios.put(
+    `https://jsonbin.io/api/bins/${binId}`,
+    body,
+    config
+  );
+};
 
 const cf = [
   '{"requests":[{"indexName":"event","params":"highlightPreTag=%3Cais-highlight-0000000000%3E&highlightPostTag=%3C%2Fais-highlight-0000000000%3E&analyticsTags=%5B%22location_intel%22%2C%22intel_view_calendar%22%5D&hitsPerPage=1000&maxValuesPerFacet=500&facets=%5B%22eventDate%22%2C%22assets%22%2C%22category%22%2C%22importance%22%2C%22status%22%2C%22subCategory%22%2C%22tags%22%5D&tagFilters=&numericFilters=%5B%22eventDate%3E%3D1640995200%22%2C%22eventDate%3C%3D1643673599%22%5D"},{"indexName":"event","params":"highlightPreTag=%3Cais-highlight-0000000000%3E&highlightPostTag=%3C%2Fais-highlight-0000000000%3E&analyticsTags=%5B%22location_intel%22%2C%22intel_view_calendar%22%5D&hitsPerPage=1&maxValuesPerFacet=500&page=0&attributesToRetrieve=%5B%5D&attributesToHighlight=%5B%5D&attributesToSnippet=%5B%5D&tagFilters=&analytics=false&clickAnalytics=false&facets=eventDate"}]}',
